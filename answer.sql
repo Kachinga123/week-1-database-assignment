@@ -3,33 +3,49 @@
 -- Topic: Library Management System
 -- =====================================================
 
--- Create the database
+-- =====================================================
+-- 1. CREATE DATABASE
+-- =====================================================
+
+-- Delete the existing database if it already exists
+-- This allows the script to be tested from a clean start
+DROP DATABASE IF EXISTS library_management;
+
+-- Create a new database
 CREATE DATABASE library_management;
 
 -- Select the database
 USE library_management;
 
+
 -- =====================================================
--- CREATE TABLES
+-- 2. CREATE AUTHORS TABLE
 -- =====================================================
 
--- Authors table
 CREATE TABLE authors (
     author_id INT PRIMARY KEY AUTO_INCREMENT,
     author_name VARCHAR(100) NOT NULL
 );
 
--- Books table
+
+-- =====================================================
+-- 3. CREATE BOOKS TABLE
+-- =====================================================
+
 CREATE TABLE books (
     book_id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(150) NOT NULL,
     author_id INT NOT NULL,
-    publication_year YEAR,
+    publication_year INT,
     category VARCHAR(50),
     FOREIGN KEY (author_id) REFERENCES authors(author_id)
 );
 
--- Members table
+
+-- =====================================================
+-- 4. CREATE MEMBERS TABLE
+-- =====================================================
+
 CREATE TABLE members (
     member_id INT PRIMARY KEY AUTO_INCREMENT,
     full_name VARCHAR(100) NOT NULL,
@@ -38,7 +54,11 @@ CREATE TABLE members (
     membership_date DATE
 );
 
--- Borrowing table
+
+-- =====================================================
+-- 5. CREATE BORROWING TABLE
+-- =====================================================
+
 CREATE TABLE borrowing (
     borrowing_id INT PRIMARY KEY AUTO_INCREMENT,
     book_id INT NOT NULL,
@@ -49,8 +69,9 @@ CREATE TABLE borrowing (
     FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
+
 -- =====================================================
--- INSERT MANY AUTHORS
+-- 6. INSERT AUTHORS
 -- =====================================================
 
 INSERT INTO authors (author_name)
@@ -66,8 +87,9 @@ VALUES
 ('Robert Kiyosaki'),
 ('Wangari Maathai');
 
+
 -- =====================================================
--- INSERT MANY BOOKS
+-- 7. INSERT BOOKS
 -- =====================================================
 
 INSERT INTO books (title, author_id, publication_year, category)
@@ -87,8 +109,9 @@ VALUES
 ('Rich Dad Poor Dad', 9, 1997, 'Finance'),
 ('Unbowed', 10, 2006, 'Biography');
 
+
 -- =====================================================
--- INSERT MANY MEMBERS
+-- 8. INSERT MEMBERS
 -- =====================================================
 
 INSERT INTO members (full_name, email, phone, membership_date)
@@ -104,8 +127,9 @@ VALUES
 ('Daniel Lomeg', 'daniel@example.com', '0790123456', '2026-04-10'),
 ('Esther Akai', 'esther@example.com', '0701234567', '2026-05-01');
 
+
 -- =====================================================
--- INSERT MANY BORROWING RECORDS
+-- 9. INSERT BORROWING RECORDS
 -- =====================================================
 
 INSERT INTO borrowing (book_id, member_id, borrow_date, return_date)
@@ -125,27 +149,39 @@ VALUES
 (13, 3, '2026-08-17', NULL),
 (14, 4, '2026-08-18', '2026-08-25');
 
+
 -- =====================================================
--- VIEW DATA
+-- 10. DISPLAY ALL AUTHORS
 -- =====================================================
 
--- Display all authors
 SELECT * FROM authors;
 
--- Display all books
+
+-- =====================================================
+-- 11. DISPLAY ALL BOOKS
+-- =====================================================
+
 SELECT * FROM books;
 
--- Display all members
+
+-- =====================================================
+-- 12. DISPLAY ALL MEMBERS
+-- =====================================================
+
 SELECT * FROM members;
 
--- Display all borrowing records
+
+-- =====================================================
+-- 13. DISPLAY ALL BORROWING RECORDS
+-- =====================================================
+
 SELECT * FROM borrowing;
 
+
 -- =====================================================
--- USEFUL QUERIES
+-- 14. DISPLAY BOOKS WITH THEIR AUTHORS
 -- =====================================================
 
--- Display books and their authors
 SELECT
     books.book_id,
     books.title,
@@ -156,7 +192,11 @@ FROM books
 JOIN authors
     ON books.author_id = authors.author_id;
 
--- Display borrowing records with member and book names
+
+-- =====================================================
+-- 15. DISPLAY BORROWING DETAILS
+-- =====================================================
+
 SELECT
     borrowing.borrowing_id,
     members.full_name,
@@ -169,7 +209,11 @@ JOIN members
 JOIN books
     ON borrowing.book_id = books.book_id;
 
--- Display books that have not yet been returned
+
+-- =====================================================
+-- 16. DISPLAY BOOKS NOT YET RETURNED
+-- =====================================================
+
 SELECT
     members.full_name,
     books.title,
@@ -181,32 +225,73 @@ JOIN books
     ON borrowing.book_id = books.book_id
 WHERE borrowing.return_date IS NULL;
 
--- Count the number of books
+
+-- =====================================================
+-- 17. COUNT TOTAL BOOKS
+-- =====================================================
+
 SELECT COUNT(*) AS total_books
 FROM books;
 
--- Count the number of members
+
+-- =====================================================
+-- 18. COUNT TOTAL MEMBERS
+-- =====================================================
+
 SELECT COUNT(*) AS total_members
 FROM members;
 
--- Count the number of authors
+
+-- =====================================================
+-- 19. COUNT TOTAL AUTHORS
+-- =====================================================
+
 SELECT COUNT(*) AS total_authors
 FROM authors;
 
--- Count borrowed books
-SELECT COUNT(*) AS borrowed_books
+
+-- =====================================================
+-- 20. COUNT BORROWING RECORDS
+-- =====================================================
+
+SELECT COUNT(*) AS total_borrowing_records
 FROM borrowing;
 
--- Display books published after 2000
+
+-- =====================================================
+-- 21. DISPLAY BOOKS PUBLISHED AFTER 2000
+-- =====================================================
+
 SELECT *
 FROM books
 WHERE publication_year > 2000;
 
--- Display books in the Fiction category
+
+-- =====================================================
+-- 22. DISPLAY FICTION BOOKS
+-- =====================================================
+
 SELECT *
 FROM books
 WHERE category = 'Fiction';
 
+
 -- =====================================================
--- END OF ASSIGNMENT
+-- 23. DISPLAY CURRENTLY BORROWED BOOKS
+-- =====================================================
+
+SELECT
+    books.title,
+    members.full_name,
+    borrowing.borrow_date
+FROM borrowing
+JOIN books
+    ON borrowing.book_id = books.book_id
+JOIN members
+    ON borrowing.member_id = members.member_id
+WHERE borrowing.return_date IS NULL;
+
+
+-- =====================================================
+-- END OF WEEK 1 DATABASE ASSIGNMENT
 -- =====================================================
